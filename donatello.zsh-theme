@@ -51,7 +51,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$FG[239]%}[%{$FG[202]%}✘%{$FG[239]%}]"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$FG[239]%}[%{$FG[040]%}✔%{$FG[239]%}]"
 
-PROMPT_LEFT_SIDE="${darkgray}╭─${resetcolor} ${username}${machine}${directory}$(git_prompt_info) ${darkgray}"
+PROMPT_LEFT_SIDE="${darkgray}╭─${resetcolor} ${username}${machine}${directory} ${darkgray}"
 PROMPT_RIGHT_SIDE="${resetcolor} $timestamp ${darkgray}─○${resetcolor}"
 
 donatello_precmd () {
