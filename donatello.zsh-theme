@@ -46,14 +46,35 @@ local machine=" ${darkgray}@${resetcolor} ${blue}$(box_name)${resetcolor}"
 local directory=" ${darkgray}:${resetcolor} ${yellow}%~${resetcolor}"
 local timestamp="${purple}%D{%A %Y-%m-%d %T}${resetcolor}"
 
+# If current directory is within a git repo, show:
+#   ± branchname[✔] : Clean
+#   ± branchname[✘] : Dirty
 ZSH_THEME_GIT_PROMPT_PREFIX=" %{$FG[239]%}±%{$reset_color%} %{$fg[255]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$FG[239]%}[%{$FG[202]%}✘%{$FG[239]%}]"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$FG[239]%}[%{$FG[040]%}✔%{$FG[239]%}]"
 
+function p4_prompt {
+    # If current directory is within a P4 workspace, show:
+    #   ⍚ [✔] : Has no opened files at/below current directory
+    #   ⍚ [✘] : Has opened files at/below current directory
+
+    P4_STATUS=$(p4 opened ./... 2>&1)
+    if [ ${P4_STATUS/"unknown - use 'client' command to create it."} = $P4_STATUS ] ; then
+        # This means we are in a P4 workspace
+        if [ ${P4_STATUS/"file(s) not opened on this client."} = $P4_STATUS ] ; then
+            # This means there are changes in this workspace
+            P4_STATUS_ICON="${orange}✘"
+        else
+            # This means there are no changes in this workspace
+            P4_STATUS_ICON="${green}✔"
+        fi
+        echo " ${darkgray}⍚${resetcolor} ${darkgray}[${P4_STATUS_ICON}${darkgray}]${resetcolor}"
+    fi
+}
 
 donatello_precmd () {
-    PROMPT_LEFT_SIDE="${darkgray}╭─${resetcolor} ${username}${machine}${directory}$(git_prompt_info) ${darkgray}"
+    PROMPT_LEFT_SIDE="${darkgray}╭─${resetcolor} ${username}${machine}${directory}$(p4_prompt)$(git_prompt_info) ${darkgray}"
     PROMPT_RIGHT_SIDE="${resetcolor} $timestamp ${darkgray}─○${resetcolor}"
     PROMPT_PADDING=`get_space $PROMPT_LEFT_SIDE $PROMPT_RIGHT_SIDE`
     echo
