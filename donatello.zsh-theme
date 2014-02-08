@@ -60,17 +60,19 @@ ZSH_THEME_GIT_PROMPT_CLEAN="${darkgray}[${green}✔${darkgray}]"
 #   ⍚ [✔] : Has no opened files at/below current directory
 #   ⍚ [✘] : Has opened files at/below current directory
 function p4_prompt {
-    P4_STATUS=$(p4 opened ./... 2>&1)
-    if [ ${P4_STATUS/"unknown - use 'client' command to create it."} = $P4_STATUS ] ; then
-        # This means we are in a P4 workspace
-        if [ ${P4_STATUS/"file(s) not opened on this client."} = $P4_STATUS ] ; then
-            # This means there are changes in this workspace
-            P4_STATUS_ICON="${yellow}✘"
-        else
-            # This means there are no changes in this workspace
-            P4_STATUS_ICON="${green}✔"
+    if [ `which p4 2>/dev/null` ] ; then
+        P4_STATUS=$(p4 opened ./... 2>&1)
+        if [ ${${P4_STATUS/"unknown - use 'client' command to create it."}/"Perforce client error:"} = $P4_STATUS ] ; then
+            # This means we are in a P4 workspace
+            if [ ${P4_STATUS/"file(s) not opened on this client."} = $P4_STATUS ] ; then
+                # This means there are changes in this workspace
+                P4_STATUS_ICON="${yellow}✘"
+            else
+                # This means there are no changes in this workspace
+                P4_STATUS_ICON="${green}✔"
+            fi
+            echo " ${darkgray}⍚${resetcolor} ${darkgray}[${P4_STATUS_ICON}${darkgray}]${resetcolor}"
         fi
-        echo " ${darkgray}⍚${resetcolor} ${darkgray}[${P4_STATUS_ICON}${darkgray}]${resetcolor}"
     fi
 }
 
