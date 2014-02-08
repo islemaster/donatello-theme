@@ -33,25 +33,27 @@ get_space() {
     echo $SPACES
 }
 
+local red="%{$FG[124]%}"
 local green="%{$FG[040]%}"
 local blue="%{$FG[033]%}"
 local yellow="%{$terminfo[bold]$FG[226]%}"
-local purple="%{$FG[091]%}"
+local purple="%{$FG[054]%}"
+local purple2="%{$FG[055]%}"
 local orange="%{$FG[202]%}"
 local darkgray="%{$FG[239]%}"
 local resetcolor="%{$reset_color%}"
 
 local username="${green}%n${resetcolor}"
 local machine=" ${darkgray}@${resetcolor} ${blue}$(box_name)${resetcolor}"
-local directory=" ${darkgray}:${resetcolor} ${yellow}%~${resetcolor}"
-local timestamp="${purple}%D{%A %Y-%m-%d %T}${resetcolor}"
+local directory=" ${darkgray}:${resetcolor} ${orange}%~${resetcolor}"
+local timestamp="${purple2}%D{%A %Y-%m-%d} ${purple}%D{%r}${resetcolor}"
 
 # If current directory is within a git repo, show:
 #   ± branchname[✔] : Clean
 #   ± branchname[✘] : Dirty
-ZSH_THEME_GIT_PROMPT_PREFIX=" ${darkgray}±${resetcolor} %{$fg[255]%}"
+ZSH_THEME_GIT_PROMPT_PREFIX=" ${darkgray}±${resetcolor} ${blue}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="${resetcolor}"
-ZSH_THEME_GIT_PROMPT_DIRTY="${darkgray}[${orange}✘${darkgray}]"
+ZSH_THEME_GIT_PROMPT_DIRTY="${darkgray}[${yellow}✘${darkgray}]"
 ZSH_THEME_GIT_PROMPT_CLEAN="${darkgray}[${green}✔${darkgray}]"
 
 # If current directory is within a P4 workspace, show:
@@ -63,7 +65,7 @@ function p4_prompt {
         # This means we are in a P4 workspace
         if [ ${P4_STATUS/"file(s) not opened on this client."} = $P4_STATUS ] ; then
             # This means there are changes in this workspace
-            P4_STATUS_ICON="${orange}✘"
+            P4_STATUS_ICON="${yellow}✘"
         else
             # This means there are no changes in this workspace
             P4_STATUS_ICON="${green}✔"
