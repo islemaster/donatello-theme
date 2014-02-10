@@ -60,7 +60,8 @@ ZSH_THEME_GIT_PROMPT_CLEAN="${darkgray}[${green}✔${darkgray}]"
 #   ⍚ [✔] : Has no opened files at/below current directory
 #   ⍚ [✘] : Has opened files at/below current directory
 function p4_prompt {
-    if [ `which p4 2>/dev/null` ] ; then
+    P4_FOUND=$(which p4 2>&1)
+    if [ ${P4_FOUND/"not found"} = $P4_FOUND ] ; then
         P4_STATUS=$(p4 opened ./... 2>&1)
         if [ ${${P4_STATUS/"unknown - use 'client' command to create it."}/"Perforce client error:"} = $P4_STATUS ] ; then
             # This means we are in a P4 workspace
