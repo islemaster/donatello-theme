@@ -64,24 +64,38 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="${resetcolor}"
 ZSH_THEME_GIT_PROMPT_DIRTY="${darkgray}[${yellow}✘${darkgray}]"
 ZSH_THEME_GIT_PROMPT_CLEAN="${darkgray}[${green}✔${darkgray}]"
 
+function isInP4Workspace {
+    local P4_FOUND
+    P4_FOUND=$(which p4 2>&1)
+    if [ ${P4_FOUND/"not found"} = $P4_FOUND ] ; then
+        local P4_STATUS
+        P4_STATUS=$(p4 opened ./... 2>&1)
+        if [ ${P4_STATUS/"unknown - use 'client' command to create it."} = $P4_STATUS ] ; then
+            if [ ${P4_STATUS/"Perforce client error:"} = $P4_STATUS ] ; then
+                if [ ${P4_STATUS/"is not under client's root"} = $P4_STATUS ] ; then
+                    return 0
+                fi
+            fi
+        fi
+    fi
+    return 1
+}
+
 # If current directory is within a P4 workspace, show:
 #   ⍚ [✔] : Has no opened files at/below current directory
 #   ⍚ [✘] : Has opened files at/below current directory
 function p4_prompt {
-    P4_FOUND=$(which p4 2>&1)
-    if [ ${P4_FOUND/"not found"} = $P4_FOUND ] ; then
+    if isInP4Workspace ; then
+        local P4_STATUS
         P4_STATUS=$(p4 opened ./... 2>&1)
-        if [ ${${P4_STATUS/"unknown - use 'client' command to create it."}/"Perforce client error:"} = $P4_STATUS ] ; then
-            # This means we are in a P4 workspace
-            if [ ${P4_STATUS/"file(s) not opened on this client."} = $P4_STATUS ] ; then
-                # This means there are changes in this workspace
-                P4_STATUS_ICON="${yellow}✘"
-            else
-                # This means there are no changes in this workspace
-                P4_STATUS_ICON="${green}✔"
-            fi
-            echo " ${darkgray}⍚${resetcolor} ${darkgray}[${P4_STATUS_ICON}${darkgray}]${resetcolor}"
+        if [ ${P4_STATUS/"file(s) not opened on this client."} = $P4_STATUS ] ; then
+            # This means there are changes in this workspace
+            P4_STATUS_ICON="${yellow}✘"
+        else
+            # This means there are no changes in this workspace
+            P4_STATUS_ICON="${green}✔"
         fi
+        echo " ${darkgray}⍚${resetcolor} ${darkgray}[${P4_STATUS_ICON}${darkgray}]${resetcolor}"
     fi
 }
 
