@@ -1,6 +1,8 @@
 donatello-theme
 ===============
 
+![donatello-theme](donatello-theme.png)
+
 Donatello theme for oh-my-zsh by Brad Buchanan (http://bradleycbuchanan.com)
 - based on Fino-time theme by Aexander Berezovsky (http://berezovsky.me)
   - based on Fino by Max Masnick (http://max.masnick.me)
